@@ -1,8 +1,8 @@
 class Plaques {
   constructor (name, height, weight, price){
     this.name = name;
-    this.height = parseInt(height)/100;
-    this.weight = parseInt(weight)/100;
+    this.height = height/100;
+    this.weight = weight/100;
     this.price = parseFloat(price);
   }
   size() {
@@ -44,15 +44,20 @@ do {
   quantity = parseInt(prompt("Cuantas paredes necesita cubrir?"));
 } while (!quantity || quantity < 1);
   
-if (quantity) {
-  for (let i = 1; i <= quantity; i++){
-     do {
-       height = prompt(`Cual es el alto de su pared ${i}?`);
-       weight = prompt(`Cual es el ancho de su pared ${i}?`);
-     } while ((!height || !weight) || (height<=0 || weight<=0));
-     walls.push(new Walls (height, weight));
-  }
-} 
+//let height = 0;
+//let weight = 0;
+
+for (let i = 1; i <= quantity; i++){  
+  do {
+    height = parseFloat(prompt(`Cual es el alto de su pared ${i} en mts?`));
+    weight = parseFloat(prompt(`Cual es el ancho de su pared ${i} en nts?`));
+    if ((!height || !weight) || (height<=0 || weight<=0)) {
+      alert (`Debe ingresar una cantidad valida de mts a cubrir`);
+    }
+  } while ((!height || !weight) || (height<=0 || weight<=0));
+
+  walls.push(new Walls (height, weight));
+}
 
 let model = 0
 
@@ -87,14 +92,14 @@ const models = () => {
   }
 
   const product60x60 = products.filter(product => (product.height === 0.6));
-  const product60x60Name = product60x60.map(element => { return element.name});
+  const product60x60Name = (product60x60.map(element => { return element.name})).sort();
   const product28x56 = products.filter(product => (product.height === 0.28));
-  const product28x56Name = product28x56.map(element => { return element.name});
+  const product28x56Name = (product28x56.map(element => { return element.name})).sort();
   const product56x56 = products.filter(product => (product.height === 0.56));
-  const product56x56Name = product56x56.map(element => { return element.name});
+  const product56x56Name = (product56x56.map(element => { return element.name})).sort();
   
   let design;
-  let confirmation
+  let confirmation;
 
   const choose = function(model) { 
     if (model === 0.36) {      
@@ -141,12 +146,11 @@ const models = () => {
       default:
         alert("Por favor indique un modelo válido");
       }
-    
-    confirmation = confirm(`El modelo elegido es el ${design.name}`)
-  }
+    confirmation = confirm(`El modelo elegido es el ${design.name}`);
+  } 
+  
+  
 
-  
-  
   do { 
     choose(model);
   } while (!confirmation);

@@ -1,16 +1,16 @@
 class Plaques {
   constructor (name, height, weight, price){
     this.name = name;
-    this.height = height;
-    this.weight = weight;
-    this.price = parseFloat(price);
+    this.height = parseFloat(height).toFixed(2);
+    this.weight = parseFloat(weight).toFixed(2);
+    this.price = parseFloat(price).toFixed(2);
     this.image = `img/${name} diseño.jpg`;
   }
   size() {
     return this.height*this.weight
   }
   description(){
-    return `Placas de ${this.height*100}x${this.weight*100} (aproximadamente) decorativas, económicas, de fácil y rápida colocación.
+    return `Placas de ${(this.height*100).toFixed(0)}x${(this.weight*100).toFixed(0)} (aproximadamente) decorativas, económicas, de fácil y rápida colocación.
     <br>
     Elimina malos olores del ambiente, absorve la humedad evitando la formación de hongos y manchas.`
   }
@@ -35,8 +35,8 @@ const ubeda = new Plaques ("Ubeda", 0.60, 0.60, 280);
 const mediterraneo = new Plaques ("Mediterraneo", 0.60, 0.60, 280);
 const liso = new Plaques ("Liso", 0.60, 0.60, 280);
 const travertino = new Plaques ("Travertino", 0.28, 0.56, 175);
-const piedra = new Plaques ("Piedra", 0.28, 56, 175);
-const pizarra = new Plaques ("Pizarra", 0.56, 56, 335);
+const piedra = new Plaques ("Piedra", 0.28, 0.56, 175);
+const pizarra = new Plaques ("Pizarra", 0.56, 0.56, 335);
 const ladrillo = new Plaques ("Ladrillo", 0.56, 0.56, 335);
 const alicante = new Plaques ("Alicante", 0.60, 0.60, 335);
 
@@ -45,6 +45,7 @@ products.push(pielNaranja, sol, solMarco, ubeda, mediterraneo, liso, travertino,
 let quantity = 0;
 
 const walls = []
+
 
 for (const product of products){
   let card = document.getElementById('myCard'); 
@@ -58,7 +59,7 @@ for (const product of products){
                           </div>
                         </div>
                       </div>`;
-};
+}
 
 /*do {
   quantity = parseInt(prompt("Cuantas paredes necesita cubrir?"));

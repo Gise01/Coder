@@ -64,6 +64,7 @@ let model;
 
 document.addEventListener('DOMContentLoaded', () => {showProducts();});
 
+//Se muestran los productos en pantalla
 function showProducts () {
   products.forEach (product => {
     let div1 = document.createElement('div');
@@ -90,6 +91,7 @@ function showProducts () {
   )  
 }
 
+//Se muestran los nombres de los productos para seleccionar el modelo
 for (let i=0; i<productsName.length; i +=1) {
   let option = document.createElement('option');
   option.textContent = `${productsName[i]}`;
@@ -97,46 +99,51 @@ for (let i=0; i<productsName.length; i +=1) {
   select.appendChild(option);
 }
 
+// Se valida el formulario y se guardan los valores
 const valForm = (e) => {
   e.preventDefault();
+  
   qWall = e.target.children[0].children[1].value;
   if (qWall < 0 || qWall > 10 || !qWall){
     alert("Por favor ingrese una cantidad válidad de paredes entre 1 y 10");
   }
+  
   model = (e.target.children[0].children[2].children[1].value).toLowerCase();
-
+ 
   for (let i=0; i<qWall; i +=1) {
-    let divWall = document.createElement('div');
-    divWall.id = "divWall"
-    divWall.setAttribute("class", "col-12");
-    let labelHeigth = document.createElement('label');
-    labelHeigth.setAttribute("class", "form-label h6");
-    labelHeigth.textContent = `"Indique en cm alto de la pared ${i+1} a cubrir"`;
-    let inputHeigth = document.createElement('input');
-    inputHeigth.setAttribute("type", "number");
-    inputHeigth.setAttribute("class", "form-control");
-    inputHeigth.setAttribute("min", "1");
-    inputHeigth.setAttribute("pattern", "^[1-9]\d*$");
-    let labelWeigth = document.createElement('label');
-    labelWeigth.setAttribute("class", "form-label h6");
-    labelWeigth.textContent = `"Indique en cm ancho de la pared ${i+1} a cubrir"`;
-    let inputWeigth = document.createElement('input');
-    inputWeigth.setAttribute("type", "number");
-    inputWeigth.setAttribute("class", "form-control");
-    inputWeigth.setAttribute("min", "1");
-    inputWeigth.setAttribute("pattern", "^[1-9]\d*$");
-  
-    divWall.appendChild(labelHeigth);
-    divWall.appendChild(inputHeigth);
-    divWall.appendChild(labelWeigth);
-    divWall.appendChild(inputWeigth);
-  
-    myForm.insertBefore(divWall, btn1);
-  }
-
+      let divWall = document.createElement('div');
+      divWall.setAttribute("class", "col-12");
+      let labelHeigth = document.createElement('label');
+      labelHeigth.setAttribute("class", "form-label h6");
+      labelHeigth.textContent = `"Indique en cm alto de la pared ${i+1} a cubrir"`;
+      let inputHeigth = document.createElement('input');
+      inputHeigth.setAttribute("type", "number");
+      inputHeigth.setAttribute("class", "form-control");
+      inputHeigth.setAttribute("min", "1");
+      inputHeigth.setAttribute("pattern", "^[1-9]\d*$");
+      let labelWeigth = document.createElement('label');
+      labelWeigth.setAttribute("class", "form-label h6");
+      labelWeigth.textContent = `"Indique en cm ancho de la pared ${i+1} a cubrir"`;
+      let inputWeigth = document.createElement('input');
+      inputWeigth.setAttribute("type", "number");
+      inputWeigth.setAttribute("class", "form-control");
+      inputWeigth.setAttribute("min", "1");
+      inputWeigth.setAttribute("pattern", "^[1-9]\d*$");
+    
+      divWall.appendChild(labelHeigth);
+      divWall.appendChild(inputHeigth);
+      divWall.appendChild(labelWeigth);
+      divWall.appendChild(inputWeigth);
+    
+      myForm.insertBefore(divWall, btn1);
+    }
 }
-
+  
 myForm.addEventListener("submit", valForm);
+  
+  
+
+
 
 
 

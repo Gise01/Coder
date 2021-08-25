@@ -1,3 +1,7 @@
+/*-----------------------------------------------------------------------------
+---------------------------DECLARACIONES---------------------------------------
+-----------------------------------------------------------------------------*/
+
 class Plaques {
   constructor (name, height, weight, price){
     this.name = name;
@@ -10,9 +14,7 @@ class Plaques {
     return this.height*this.weight
   }
   description(){
-    return `Placas de ${(this.height*100).toFixed(0)}x${(this.weight*100).toFixed(0)} (aproximadamente) decorativas, económicas, de fácil y rápida colocación.
-    <br>
-    Elimina malos olores del ambiente, absorve la humedad evitando la formación de hongos y manchas.`
+    return `Placas de ${(this.height*100).toFixed(0)}x${(this.weight*100).toFixed(0)} (aproximadamente) decorativas, económicas, de fácil y rápida colocación. Elimina malos olores del ambiente, absorve la humedad evitando la formación de hongos y manchas.`
   }
 }
 
@@ -46,22 +48,47 @@ const walls = []
 
 const productsName = products.map(element => { return (element.name)}).sort();
 
-for (const product of products){
-  let card = document.getElementById('myCard'); 
-  card.innerHTML += ` <div class="col" style="width: auto; margin: auto auto;">  
-                        <div class="card text-white bg-secondary mb-3 h-100" style="width: 18rem;">
-                          <img src="${product.image}" class="card-img-top" alt="...">
-                          <div class="card-body">
-                            <p class="card-text">
-                              ${product.description()}
-                            </p>
-                          </div>
-                        </div>
-                      </div>`;
-  
-}
-
 let select = document.querySelector('select');
+
+let card = document.getElementById('myCard');
+
+let myForm = document.getElementById('formWall');
+
+let qWall = 0;
+
+let model;
+
+/*-----------------------------------------------------------------------------
+------------------------------FUNCIONES----------------------------------------
+-----------------------------------------------------------------------------*/
+
+document.addEventListener('DOMContentLoaded', () => {showProducts();});
+
+function showProducts () {
+  products.forEach (product => {
+    let div1 = document.createElement('div');
+    div1.classList.add('col');
+    div1.setAttribute("style", "width: auto; margin: auto auto;");
+    let div2 = document.createElement('div');
+    div2.classList.add("card", "text-white", "bg-secondary", "mb-3", "h-100");
+    div2.setAttribute("style", "width: 18rem;");
+    let div3 = document.createElement('div');
+    div3.classList.add('card-body');
+    let img = document.createElement('img');
+    img.classList.add('card-img-top');
+    img.src = `${product.image}`;
+    let p = document.createElement('p');
+    p.classList.add('card-text');
+    p.textContent = `${product.description()}`;
+
+    div3.appendChild(p);
+    div2.appendChild(img);
+    div2.appendChild(div3);
+    div1.appendChild(div2);
+    card.appendChild(div1);
+    }
+  )  
+}
 
 for (let i=0; i<productsName.length; i +=1) {
   let option = document.createElement('option');
@@ -69,11 +96,6 @@ for (let i=0; i<productsName.length; i +=1) {
   option.setAttribute("value", `"${productsName[i]}"`);
   select.appendChild(option);
 }
-
-let myForm = document.getElementById('formWall');
-
-let qWall = 0;
-let model;
 
 const valForm = (e) => {
   e.preventDefault();
@@ -85,9 +107,10 @@ const valForm = (e) => {
 
   for (let i=0; i<qWall; i +=1) {
     let divWall = document.createElement('div');
+    divWall.id = "divWall"
     divWall.setAttribute("class", "col-12");
     let labelHeigth = document.createElement('label');
-    labelHeigth.setAttribute("class", "form-label h5");
+    labelHeigth.setAttribute("class", "form-label h6");
     labelHeigth.textContent = `"Indique en cm alto de la pared ${i+1} a cubrir"`;
     let inputHeigth = document.createElement('input');
     inputHeigth.setAttribute("type", "number");
@@ -95,7 +118,7 @@ const valForm = (e) => {
     inputHeigth.setAttribute("min", "1");
     inputHeigth.setAttribute("pattern", "^[1-9]\d*$");
     let labelWeigth = document.createElement('label');
-    labelWeigth.setAttribute("class", "form-label h5");
+    labelWeigth.setAttribute("class", "form-label h6");
     labelWeigth.textContent = `"Indique en cm ancho de la pared ${i+1} a cubrir"`;
     let inputWeigth = document.createElement('input');
     inputWeigth.setAttribute("type", "number");

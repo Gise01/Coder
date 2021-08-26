@@ -1,159 +1,155 @@
-class Plaques {
-  constructor (name, height, weight, price){
-    this.name = name;
-    this.height = parseInt(height)/100;
-    this.weight = parseInt(weight)/100;
-    this.price = parseFloat(price);
-  }
-  size() {
-    return this.height*this.weight
-  }
+import {products} from './plaques.js'
+/*-----------------------------------------------------------------------------
+---------------------------DECLARATION---------------------------------------
+-----------------------------------------------------------------------------*/
+
+const productsName = products.map(element => { return (element.name)}).sort();
+
+let select = document.querySelector('#select');
+
+let card = document.querySelector('#myCard');
+
+let myForm = document.querySelector('#formWalls');
+
+let qWall = document.querySelector('#qWall');
+
+let model = document.querySelector('.form-select');
+
+let formWall = document.createElement('form');
+formWall.classList.add('row', 'g-3');
+formWall.id = 'formWallbtn2';
+
+let divForm = document.querySelector('#form');
+
+let btn1 = document.querySelector('#btn1');
+
+let wallsModel = [];
+
+/*-----------------------------------------------------------------------------
+------------------------------FUNCTION----------------------------------------
+-----------------------------------------------------------------------------*/
+
+document.addEventListener('DOMContentLoaded', () => {
+  showProducts();}
+  
+  );
+
+//Se muestran los productos en pantalla
+function showProducts () {
+  products.forEach (product => {
+    let div1 = document.createElement('div');
+    div1.classList.add('col');
+    div1.setAttribute("style", "width: auto; margin: auto auto;");
+    let div2 = document.createElement('div');
+    div2.classList.add("card", "text-white", "bg-secondary", "mb-3", "h-100");
+    div2.setAttribute("style", "width: 18rem;");
+    let div3 = document.createElement('div');
+    div3.classList.add('card-body');
+    let img = document.createElement('img');
+    img.classList.add('card-img-top');
+    img.src = `${product.image}`;
+    let p = document.createElement('p');
+    p.classList.add('card-text');
+    p.textContent = `${product.description()}`;
+
+    div3.appendChild(p);
+    div2.appendChild(img);
+    div2.appendChild(div3);
+    div1.appendChild(div2);
+    card.appendChild(div1);
+    }
+  )  
 }
 
-class Walls {
-  constructor (height, weight){
-    this.height = parseFloat(height);
-    this.weight = parseFloat(weight);
-  }
-  cover(){
-    return this.height*this.weight
-  }
+//Se muestran los nombres de los productos para seleccionar el modelo
+for (let i=0; i<productsName.length; i +=1) {
+  let option = document.createElement('option');
+  option.textContent = `${productsName[i]}`;
+  option.setAttribute("value", `"${productsName[i]}"`);
+  select.appendChild(option);
 }
 
-const products = []
+myForm.addEventListener("submit", valForm);
 
-const pielNaranja = new Plaques ("Piel Naranja", 60, 60, 280);
-const sol = new Plaques ("Sol", 60, 60, 280);
-const solMarco = new Plaques ("Sol con Marco", 60, 60, 280);
-const ubeda = new Plaques ("Ubeda", 60, 60, 280);
-const mediterraneo = new Plaques ("Mediterraneo", 60, 60, 280);
-const liso = new Plaques ("Liso", 60, 60, 280);
-const travertino = new Plaques ("Travertino", 28, 56, 175);
-const piedra = new Plaques ("Piedra", 28, 56, 175);
-const pizarra = new Plaques ("Pizarra", 56, 56, 335);
-const ladrillo = new Plaques ("Ladrillo", 56, 56, 335);
-const alicante = new Plaques ("Alicante", 60, 60, 335);
-
-products.push(pielNaranja, sol, solMarco, ubeda, mediterraneo, liso, travertino, piedra, pizarra, ladrillo, alicante);
-
-let quantity = 0;
-
-const walls = []
-
-do {
-  quantity = parseInt(prompt("Cuantas paredes necesita cubrir?"));
-} while (!quantity || quantity < 1);
+// Se valida el formulario y se guardan los valores
+function valForm (e) {
+  e.preventDefault();
   
-if (quantity) {
-  for (let i = 1; i <= quantity; i++){
-     do {
-       height = prompt(`Cual es el alto de su pared ${i}?`);
-       weight = prompt(`Cual es el ancho de su pared ${i}?`);
-     } while ((!height || !weight) || (height<=0 || weight<=0));
-     walls.push(new Walls (height, weight));
+  qWall = qWall.value
+
+  if (qWall < 0 || qWall > 10 || !qWall){
+    alert("Por favor ingrese una cantidad válidad de paredes entre 1 y 10");
+    return;
   }
-} 
-
-let model = 0
-
-const models = () => {
-  do {
-    model = parseInt(prompt(`Indique el modelo de placa que necesita según las siguientes opciones: 1) 60x60 \n2) 28x56 \n3) 56x56`));
-  } while (!model);
-
-  switch (model) {
-    case 1:
-      model = 0.36;
-      break;
-    case 2:
-      model = 0.1568;
-      break;
-    case 3:
-      model = 0.3136;
-      break;
-    default:
-      alert("Por favor debe solo indicar 1 o 2 o 3 según corresponda");
-    }
-  }
-
-  do { 
-    models();
-  } while (!model || model < 0 || model > 3);
-
-  let totalCover = 0;
+  localStorage.setItem("qWall", qWall);
+  localStorage.setItem("model", (model.value).toLowerCase());
   
-  for (let i=0; i < walls.length ; i++){
-    totalCover += walls[i].cover();
-  }
+  createWalls(qWall);
+}
 
-  const product60x60 = products.filter(product => (product.height === 0.6));
-  const product60x60Name = product60x60.map(element => { return element.name});
-  const product28x56 = products.filter(product => (product.height === 0.28));
-  const product28x56Name = product28x56.map(element => { return element.name});
-  const product56x56 = products.filter(product => (product.height === 0.56));
-  const product56x56Name = product56x56.map(element => { return element.name});
-  
-  let design;
-  let confirmation
+// Se crea un formulario para la medida de las paredes
+function createWalls (qWall) {
+  btn1.remove();
 
-  const choose = function(model) { 
-    if (model === 0.36) {      
-      design = (prompt(`Indique el modelo de placa que necesita según las siguientes opciones: ${product60x60Name.join("\n")}`));
-    } else if (model === 0.1568) {
-      design = (prompt(`Indique el modelo de placa que necesita según las siguientes opciones: ${product28x56Name.join("\n")}`));
-    } else {
-      design = (prompt(`Indique el modelo de placa que necesita según las siguientes opciones: ${product56x56Name.join("\n")}`));
-    }
-    switch (design.toLowerCase()) {
-      case "travertino":
-        design = travertino;
-        break;
-      case "piedra":
-        design = piedra;
-        break;
-      case "sol":
-        design = sol;
-        break;
-      case "sol con marco":
-        design = solMarco;
-        break;
-      case "mediterraneo":
-        design = mediterraneo;
-        break;
-      case "ubeda":
-        design = ubeda;
-        break;
-      case "piel naranja":
-        design = pielNaranja;
-        break;
-      case "alicante":
-        design = alicante;
-        break;
-      case "liso":
-        design = liso;
-        break;
-      case "pizarra":
-        design = pizarra;
-        break;
-      case "ladrillo":
-        design = ladrillo;
-        break;
-      default:
-        alert("Por favor indique un modelo válido");
-      }
+  for (let i=0; i<qWall; i +=1) {
+
+    let divWallH = document.createElement('div');
+    divWallH.setAttribute("class", "col-md-6");
+    let divWallW = document.createElement('div');
+    divWallW.setAttribute("class", "col-md-6");
+    let labelHeigth = document.createElement('label');
+    labelHeigth.setAttribute("class", "form-label h6");
+    labelHeigth.textContent = `"Indique en cm alto de la pared ${i+1} a cubrir"`;
+    let inputHeigth = document.createElement('input');
+    inputHeigth.setAttribute("type", "number");
+    inputHeigth.setAttribute("class", "form-control");
+    inputHeigth.setAttribute("min", "1");
+    inputHeigth.setAttribute("pattern", "^[1-9]\d*$");
+    inputHeigth.id = `paredH${[i+1]}`
+    let labelWeigth = document.createElement('label');
+    labelWeigth.setAttribute("class", "form-label h6");
+    labelWeigth.textContent = `"Indique en cm ancho de la pared ${i+1} a cubrir"`;
+    let inputWeigth = document.createElement('input');
+    inputWeigth.setAttribute("type", "number");
+    inputWeigth.setAttribute("class", "form-control");
+    inputWeigth.setAttribute("min", "1");
+    inputWeigth.setAttribute("pattern", "^[1-9]\d*$");
+    inputWeigth.id = `paredW${[i+1]}`
     
-    confirmation = confirm(`El modelo elegido es el ${design.name}`)
+    divWallH.appendChild(labelHeigth);
+    divWallH.appendChild(inputHeigth);
+    divWallW.appendChild(labelWeigth);
+    divWallW.appendChild(inputWeigth);
+
+    formWall.appendChild(divWallH)
+    formWall.appendChild(divWallW)
+      
   }
-
+    
+  let btn2 = document.createElement('button');
+  btn2.classList.add('btn', 'btn-primary');
+  btn2.setAttribute("type", "submit");
+  btn2.id = 'btn2'
+  btn2.textContent = 'ENVIAR';
   
-  
-  do { 
-    choose(model);
-  } while (!confirmation);
-  
-  let unit = Math.ceil(totalCover/design.size());
-  let totalPrice = unit * design.price;
+  let divBtn = document.createElement('div');
+  divBtn.classList.add('col-12')
+  divBtn.appendChild(btn2);
 
-  alert (`Para cubrir la/las ${walls.length} pared/es indicadas con el modelo ${design.name}, Ud requiere de ${unit} placas y debe abonar $${totalPrice}` )
+  formWall.appendChild(divBtn);
+
+  divForm.appendChild(formWall);
+  };
 
 
+formWall.addEventListener('submit',(e2) => {
+  e2.preventDefault();
+
+  for (let i = 0; i<qWall; i+=1) {
+    const wall = new Walls((document.querySelector(`#paredH${[i+1]}`).value)/100, (document.querySelector(`#paredW${[i+1]}`).value)/100);
+    wallsModel.push(wall);
+  }
+  localStorage.setItem("walls", JSON.stringify(wallsModel));
+
+  //showQuotation();
+})

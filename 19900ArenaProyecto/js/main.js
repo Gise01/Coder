@@ -1,9 +1,9 @@
-import {products} from './plaques.js'
+import {plaques} from './plaques.js'
 /*-----------------------------------------------------------------------------
 ---------------------------DECLARATION---------------------------------------
 -----------------------------------------------------------------------------*/
 
-const productsName = products.map(element => { return (element.name)}).sort();
+const plaquesName = plaques.map(element => { return (element.name)}).sort();
 
 let select = document.querySelector('#select');
 
@@ -30,13 +30,13 @@ let wallsModel = [];
 -----------------------------------------------------------------------------*/
 
 document.addEventListener('DOMContentLoaded', () => {
-  showProducts();}
+  showPlaques();}
   
   );
 
 //Se muestran los productos en pantalla
-function showProducts () {
-  products.forEach (product => {
+function showPlaques () {
+  plaques.forEach (plaque => {
     let div1 = document.createElement('div');
     div1.classList.add('col');
     div1.setAttribute("style", "width: auto; margin: auto auto;");
@@ -47,10 +47,10 @@ function showProducts () {
     div3.classList.add('card-body');
     let img = document.createElement('img');
     img.classList.add('card-img-top');
-    img.src = `${product.image}`;
+    img.src = `${plaque.image}`;
     let p = document.createElement('p');
     p.classList.add('card-text');
-    p.textContent = `${product.description()}`;
+    p.textContent = `${plaque.description()}`;
 
     div3.appendChild(p);
     div2.appendChild(img);
@@ -62,10 +62,10 @@ function showProducts () {
 }
 
 //Se muestran los nombres de los productos para seleccionar el modelo
-for (let i=0; i<productsName.length; i +=1) {
+for (let i=0; i<plaquesName.length; i +=1) {
   let option = document.createElement('option');
-  option.textContent = `${productsName[i]}`;
-  option.setAttribute("value", `"${productsName[i]}"`);
+  option.textContent = `${plaquesName[i]}`;
+  option.setAttribute("value", `"${plaquesName[i]}"`);
   select.appendChild(option);
 }
 
@@ -151,5 +151,9 @@ formWall.addEventListener('submit',(e2) => {
   }
   localStorage.setItem("walls", JSON.stringify(wallsModel));
 
-  //showQuotation();
+  showQuotation();
 })
+
+function showQuotation(){
+  alert (`Ud eligio el model ${localStorage.getItem("model")}`)
+}

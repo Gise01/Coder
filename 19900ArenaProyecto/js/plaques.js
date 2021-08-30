@@ -15,7 +15,7 @@ class Plaques {
   }
 }
 
-export const products = []
+export const plaques = []
 
 const pielNaranja = new Plaques ("Piel Naranja", 0.60, 0.60, 280, "revestimiento");
 const sol = new Plaques ("Sol", 0.60, 0.60, 280, "revestimiento");
@@ -29,4 +29,4 @@ const pizarra = new Plaques ("Pizarra", 0.56, 0.56, 335, "revestimiento");
 const ladrillo = new Plaques ("Ladrillo", 0.56, 0.56, 335, "revestimiento");
 const alicante = new Plaques ("Alicante", 0.60, 0.60, 335, "revestimiento");
 
-products.push(pielNaranja, sol, solMarco, ubeda, mediterraneo, liso, travertino, piedra, pizarra, ladrillo, alicante);
+plaques.push(pielNaranja, sol, solMarco, ubeda, mediterraneo, liso, travertino, piedra, pizarra, ladrillo, alicante);

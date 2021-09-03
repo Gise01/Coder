@@ -71,7 +71,7 @@ initial();
 
 // Formulario para cotizar paredes
 function walls(){
-  $('div#form').append('<form id="formWalls" class="row g-3"> <div id="paredes" class="col-md-6"> <label for="validationDefault01" class="form-label h5"> Cantidad de paredes </label> <input id="qWall" type="number" class="form-control" id="validationDefault01" min="1" max="10" pattern="^[1-9]\d*$" required> </div> <div id="divSelectP" class="col-md-6"> <h5> Seleccione que modelo de placa le interesa cotizar </h5> <select id="selectP" class="form-select" aria-label="Default select example"> </select> </div> <div class="form-check form-switch"> <input id="frisos" class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"> <label class="form-check-label" for="flexSwitchCheckDefault"> Desea agregar guardas? </label> </div> </form> <div id="btn1" class="col-12"> <button class="btn btn-primary" type="submit"> ENVIAR </button> </div>');
+  $('div#form').append('<form id="formWalls" class="row g-3"> <div id="paredes" class="col-md-6"> <label for="validationDefault01" class="form-label h5"> Cantidad de paredes </label> <input id="qWall" type="number" class="form-control" id="validationDefault01" min="1" max="10" pattern="^[1-9]\d*$" required> </div> <div id="divSelectP" class="col-md-6"> <h5> Seleccione que modelo de placa le interesa cotizar </h5> <select id="selectP" class="form-select" aria-label="Default select example"> </select> </div> <div class="form-check form-switch"> <input id="frisos" class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"> <label class="form-check-label" for="flexSwitchCheckDefault"> Desea agregar guardas? </label> </div> <div id="btn1" class="col-12"> <button class="btn btn-primary" type="submit"> ENVIAR </button> </div> </form>');
   
   //Se muestran los nombres de los productos para seleccionar el modelo
   plaquesName.forEach (plaque => {
@@ -81,34 +81,34 @@ function walls(){
   //Se agregan guardas?
   $('input#frisos').click(()=> {
     if ($('input#frisos').prop('checked')){
-      $('#formWalls').append('<div id="frisos" class="col-md-6"> <label for="validationDefault01" class="form-label h5"> Cantidad de mts lineales de guardas </label> <input id="qFri" type="number" class="form-control" id="validationDefault01" min="1" max="10" pattern="^[1-9]\d*$" required> </div>').before('#btn1')
+      $('#btn1').before('<div id="frisos" class="col-md-6"> <label for="validationDefault01" class="form-label h5"> Cantidad de mts lineales de guardas </label> <input id="qFri" type="number" class="form-control" id="validationDefault01" min="1" max="10" pattern="^[1-9]\d*$" required> </div>')
     } else {
       $('div#frisos').remove();
     }
   })
-
-  // Se valida el formulario y se guardan los valores
-  $('#formWalls').submit(function (e) {
-    e.preventDefault();
-    
-    let qWall = $('#qWall').val();
-    console.log (qWall);
-
-    /* if (qWall < 0 || qWall > 10 || !qWall){
-      alert("Por favor ingrese una cantidad válidad de paredes entre 1 y 10");
-      return;
-    }
-    localStorage.setItem("qWall", qWall);
-    localStorage.setItem("model", (model.value).toLowerCase());
-    if($('#qFri')){
-      localStorage.setItem("qFri", $('#qfri').val());
-    } else {
-      localStorage.setItem("qFri", 0);
-    }
-    
-    createWalls(qWall); */
-  })
 };
+
+// Se valida el formulario y se guardan los valores
+$('#formWalls').submit(function (e) {
+  e.preventDefault();
+  
+  let qWall = $('#qWall').val();
+  console.log (qWall);
+
+  /* if (qWall < 0 || qWall > 10 || !qWall){
+    alert("Por favor ingrese una cantidad válidad de paredes entre 1 y 10");
+    return;
+  }
+  localStorage.setItem("qWall", qWall);
+  localStorage.setItem("model", (model.value).toLowerCase());
+  if($('#qFri')){
+    localStorage.setItem("qFri", $('#qfri').val());
+  } else {
+    localStorage.setItem("qFri", 0);
+  }
+  
+  createWalls(qWall); */
+})
 
 // Se crea un formulario para la medida de las paredes
 function createWalls (qWall) {

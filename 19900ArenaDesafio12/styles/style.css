@@ -52,12 +52,3 @@ div#form{
   padding: 15px;
 }
 
-.btn-primary, .btn-primary:active, .btn-primary:visited, .btn, .btn:active, .btn:visited {
-  background-color: darkorange;
-  border-color: darkorange;
-}
-
-.btn-primary:hover, .btn:hover{
-  background-color: orangered;
-  border-color: orangered;
-}

@@ -13,6 +13,12 @@ const roofsName = roofs.map(element => { return (element.name)}).sort();
 
 let card = document.querySelector('#myCard');
 
+let formWall = document.createElement('form');
+formWall.classList.add('row', 'g-3');
+formWall.id = 'formWallbtn2';
+
+let divForm = document.querySelector('div#form');
+
 let wallsModel = [];
 
 /*-----------------------------------------------------------------------------
@@ -66,11 +72,12 @@ function initial() {
     }
   })
 };
-
 initial();
 
 // Formulario para cotizar paredes
 function walls(){
+  $('form#formWalls').remove();
+
   $('div#form').append('<form id="formWalls" class="row g-3"> <div id="paredes" class="col-md-6"> <label for="validationDefault01" class="form-label h5"> Cantidad de paredes </label> <input id="qWall" type="number" class="form-control" id="validationDefault01" min="1" max="10" pattern="^[1-9]\d*$" required> </div> <div id="divSelectP" class="col-md-6"> <h5> Seleccione que modelo de placa le interesa cotizar </h5> <select id="selectP" class="form-select" aria-label="Default select example"> </select> </div> <div class="form-check form-switch"> <input id="frisos" class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"> <label class="form-check-label" for="flexSwitchCheckDefault"> Desea agregar guardas? </label> </div> <div id="btn1" class="col-12"> <button class="btn btn-primary" type="submit"> ENVIAR </button> </div> </form>');
   
   //Se muestran los nombres de los productos para seleccionar el modelo
@@ -86,34 +93,42 @@ function walls(){
       $('div#frisos').remove();
     }
   })
+
+  valFormWall();
 };
 
 // Se valida el formulario y se guardan los valores
-$('#formWalls').submit(function (e) {
-  e.preventDefault();
-  
-  let qWall = $('#qWall').val();
-  console.log (qWall);
+function valFormWall () {
+   $('#formWalls').submit(function (e) {
+      let qWall = $('input#qWall').val();
+      let model = ($('select#selectP').val()).toLowerCase();
+      let qFri = $('input#qFri').val();
 
-  /* if (qWall < 0 || qWall > 10 || !qWall){
-    alert("Por favor ingrese una cantidad válidad de paredes entre 1 y 10");
-    return;
-  }
-  localStorage.setItem("qWall", qWall);
-  localStorage.setItem("model", (model.value).toLowerCase());
-  if($('#qFri')){
-    localStorage.setItem("qFri", $('#qfri').val());
-  } else {
-    localStorage.setItem("qFri", 0);
-  }
-  
-  createWalls(qWall); */
-})
+      if (qWall < 0 || qWall > 10 || !qWall){
+        alert("Por favor ingrese una cantidad válidad de paredes entre 1 y 10");
+        return;
+      }
+
+      if (!qFri) {
+        qFri = 0;
+      }
+
+      localStorage.setItem("qWall", qWall);
+      localStorage.setItem("model", model);
+      localStorage.setItem("frisos", qFri)
+     
+      e.preventDefault();
+      
+      createWalls(qWall);
+
+  })
+}
+
 
 // Se crea un formulario para la medida de las paredes
 function createWalls (qWall) {
   btn1.remove();
-
+  
   for (let i=0; i<qWall; i +=1) {
 
     let divWallH = document.createElement('div');

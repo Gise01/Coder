@@ -10,6 +10,13 @@ const products = [...plaques, ...moldings, ...adds];
 const plaquesNameW = plaques.filter(element => element.type === "revestimiento").map(element => { return (element.name)}).sort();
 
 const plaquesNameR = plaques.filter(element => element.type === "cielorraso").map(element => { return (element.name)}).sort();
+
+const productsJson = () => {
+  fetch('data/products.json')
+  .then((resp) => resp.json() )
+  .then((allproducts) => showSelection(allproducts))
+  .catch((e) => console.log(e));
+}
  
 let card = document.querySelector('#myCard');
 
@@ -23,6 +30,8 @@ formRoof.id = 'formRoofbtn2';
 
 let divForm = document.querySelector('div#form');
 
+
+
 const roofsModel = []
 
 const wallsModel = []
@@ -32,7 +41,8 @@ const wallsModel = []
 -----------------------------------------------------------------------------*/
 
 document.addEventListener('DOMContentLoaded', () => {
-  showProducts();}
+  showProducts();
+  initial();}
   
   );
 
@@ -85,7 +95,6 @@ function initial() {
     }
   })
 };
-initial();
 
 // Formulario para cotizar paredes
 function walls(){
@@ -181,6 +190,7 @@ function valFormWall () {
      
       e.preventDefault();
       
+      productsJson();
       createWalls(qWall);
 
   })
@@ -213,20 +223,23 @@ function valFormRoof () {
  })
 }
 
+//Crea una tarjeta con la información seleccionada 
+function showSelection(allproducts) {
+  let modelW = localStorage.getItem("modelW");
+  let qFri = localStorage.getItem("frisos");
+  let qWall = localStorage.getItem("qWall");
+  const plaque = allproducts.find( element => element.name === modelW);
+      
+  $('img#imgWallSelected').attr('src', plaque.image);
+  $('p#pWallSelected').text(`Ud ha indicado que necesita cotizar ${qWall} pared/paredes, con el modelo: ${plaque.name} y ${qFri} frisos. Para continuar por favor detalle las medidas de cada pared`)
+};
+  
 // Se crea un formulario para la medida de las paredes
 function createWalls (qWall) {
   formWalls.remove();
   divSelect.remove();
   myCard.remove();
-
-  let model = localStorage.getItem("modelW");
-  let qFri = localStorage.getItem("frisos");
-     
-  const plaque = plaques.find( element => element.name === model);
-  
-  $('img#imgWallSelected').attr('src', plaque.image);
-  $('p#pWallSelected').text(`Ud ha indicado que necesita cotizar ${qWall} pared/paredes, con el modelo: ${plaque.name} y ${qFri} frisos. Para continuar por favor detalle las medidas de cada pared`)
-  
+    
   $('#wallSelected').slideDown().delay(500).fadeOut("slow").fadeIn();
 
   for (let i=0; i<qWall; i +=1) {

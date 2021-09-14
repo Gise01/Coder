@@ -10,6 +10,13 @@ const products = [...plaques, ...moldings, ...adds];
 const plaquesNameW = plaques.filter(element => element.type === "revestimiento").map(element => { return (element.name)}).sort();
 
 const plaquesNameR = plaques.filter(element => element.type === "cielorraso").map(element => { return (element.name)}).sort();
+
+const productsJson = () => {
+  fetch('data/products.json')
+  .then((resp) => resp.json() )
+  .then((allproducts) => showSelection(allproducts))
+  .catch((e) => console.log(e));
+}
  
 let card = document.querySelector('#myCard');
 
@@ -27,12 +34,14 @@ const roofsModel = []
 
 const wallsModel = []
 
+
 /*-----------------------------------------------------------------------------
 ------------------------------FUNCTION----------------------------------------
 -----------------------------------------------------------------------------*/
 
 document.addEventListener('DOMContentLoaded', () => {
-  showProducts();}
+  showProducts();
+  initial();}
   
   );
 
@@ -85,11 +94,11 @@ function initial() {
     }
   })
 };
-initial();
 
 // Formulario para cotizar paredes
 function walls(){
   $('form#formWalls').remove();
+  $('form#formRoofs').remove();
 
   $('div#form').append(`<form id="formWalls" class="row g-3"> 
                           <div id="paredes" class="col-md-6"> 
@@ -132,6 +141,7 @@ function walls(){
 // Formulario para cotizar paredes
 function fRoofs(){
   $('form#formRoofs').remove();
+  $('form#formWalls').remove();
 
   $('div#form').append(`<form id="formRoofs" class="row g-3"> 
                           <div id="techos" class="col-md-6"> 
@@ -181,6 +191,7 @@ function valFormWall () {
      
       e.preventDefault();
       
+      productsJson();
       createWalls(qWall);
 
   })
@@ -213,20 +224,23 @@ function valFormRoof () {
  })
 }
 
+//Crea una tarjeta con la información seleccionada 
+function showSelection(allproducts) {
+  let modelW = localStorage.getItem("modelW");
+  let qFri = localStorage.getItem("frisos");
+  let qWall = localStorage.getItem("qWall");
+  const plaque = allproducts.find( element => element.name === modelW);
+      
+  $('img#imgWallSelected').attr('src', plaque.image);
+  $('p#pWallSelected').text(`Ud ha indicado que necesita cotizar ${qWall} pared/paredes, con el modelo: ${plaque.name} y ${qFri} frisos. Para continuar por favor detalle las medidas de cada pared`)
+};
+  
 // Se crea un formulario para la medida de las paredes
 function createWalls (qWall) {
   formWalls.remove();
   divSelect.remove();
   myCard.remove();
-
-  let model = localStorage.getItem("modelW");
-  let qFri = localStorage.getItem("frisos");
-     
-  const plaque = plaques.find( element => element.name === model);
-  
-  $('img#imgWallSelected').attr('src', plaque.image);
-  $('p#pWallSelected').text(`Ud ha indicado que necesita cotizar ${qWall} pared/paredes, con el modelo: ${plaque.name} y ${qFri} frisos. Para continuar por favor detalle las medidas de cada pared`)
-  
+    
   $('#wallSelected').slideDown().delay(500).fadeOut("slow").fadeIn();
 
   for (let i=0; i<qWall; i +=1) {
@@ -294,10 +308,10 @@ function createRoofs (qRoof) {
   divSelect.remove();
   myCard.remove();
 
-  let model = localStorage.getItem("modelR");
+  let modelR = localStorage.getItem("modelR");
   let qMol = localStorage.getItem("molduras");
      
-  const roof = plaques.find( element => element.name === model);
+  const roof = plaques.find( element => element.name === modelR);
   
   $('img#imgRoofSelected').attr('src', roof.image);
   $('p#pRoofSelected').text(`Ud ha indicado que necesita cotizar ${qRoof} techo/techos, con el modelo: ${roof.name} y ${qMol} frisos. Para continuar por favor detalle las medidas de cada techo`)
@@ -375,7 +389,7 @@ formWall.addEventListener('submit',(e2) => {
   }
   localStorage.setItem("walls", JSON.stringify(wallsModel));
 
-  //showQuotation();
+  showQuotationWall();
 })
 
 //Se toman los valores de los techos, y se guardan en un array para calcular la cotización
@@ -390,9 +404,48 @@ formRoof.addEventListener('submit',(e2) => {
   }
   localStorage.setItem("roofs", JSON.stringify(roofsModel));
 
-  //showQuotation();
+  showQuotationRoof();
 })
 
-function showQuotation(){
-  alert (`Ud eligio el model ${localStorage.getItem("model")}`)
+//Muestra cotización de paredes según información recolectada
+function showQuotationWall(){
+  let totalSizeW = 0;
+  let walls = JSON.parse(localStorage.getItem("walls"))
+  let model = localStorage.getItem("modelW");
+  const wallT = plaques.find( element => element.name === model);
+  const sellajunta = adds.find( element => element.name === "Sellajuntas");
+  const adhesivo = adds.find( element => element.name === "Adhesivo");
+  const adh2e1 = adds.find( element => element.name === "2en1");
+
+  walls.forEach(wall => {
+    totalSizeW += wall.height*wall.width;
+    return totalSizeW
+  })
+  let qPlaWall = Math.ceil(totalSizeW/wallT.size())*wallT.price;  
+  let frisTot = localStorage.getItem("frisos")*135;
+  let sellTot = sellajunta.performanceWalls(totalSizeW)*sellajunta.price;
+  let adhTot = adhesivo.performanceWalls(totalSizeW)*adhesivo.price;
+  let adh2en1Tot = adh2e1.performanceWalls(totalSizeW)*adh2e1.price;
+
+  let totalQuotation1 = qPlaWall + frisTot + sellTot + adhTot;
+  let totalQuotation2 = qPlaWall + frisTot + adh2en1Tot;
+}
+
+//Muestra cotización de techos según información recolectada
+function showQuotationRoof(){
+  let totalSizeR = 0;
+  let roofs = JSON.parse(localStorage.getItem("roofs"))
+  let model = localStorage.getItem("modelR");
+  const roofT = plaques.find( element => element.name === model);
+  const sellajunta = adds.find( element => element.name === "Sellajuntas");
+
+  roofs.forEach(roof => {
+    totalSizeR += roof.height*roof.width;
+    return totalSizeR
+  })
+  let qPlaRoof = Math.ceil((totalSizeR/roofT.size()).toFixed(2))*roofT.price;  
+  let molTot = localStorage.getItem("molduras")*195;
+  let sellTot = sellajunta.performanceWalls(totalSizeR)*sellajunta.price;
+
+  let totalQuotation = qPlaRoof + molTot + sellTot;
 }

@@ -8,7 +8,7 @@ class Plaques {
     this.image = `img/${name} ${type}.jpg`;
   }
   size() {
-    return this.height*this.width
+    return (this.height*this.width).toFixed(2);
   }
   description(){
     return `Placas de ${this.type} ${(this.height*100).toFixed(0)}x${(this.width*100).toFixed(0)} (aproximadamente) decorativas, económicas, de fácil y rápida colocación. Elimina malos olores del ambiente, absorve la humedad evitando la formación de hongos y manchas.`

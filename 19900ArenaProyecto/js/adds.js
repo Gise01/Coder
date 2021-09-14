@@ -2,7 +2,7 @@ class Adds {
   constructor (name, qty, price, performance, type){
     this.name = name;
     this.qty = qty
-    this.price = parseFloat(price).toFixed(2);
+    this.price = price;
     this.performance = performance;
     this.type = type;
     this.image = `img/${name}.jpg`;

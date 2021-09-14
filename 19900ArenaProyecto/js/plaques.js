@@ -3,7 +3,7 @@ class Plaques {
     this.name = name;
     this.height = parseFloat(height).toFixed(2);
     this.width = parseFloat(width).toFixed(2);
-    this.price = parseFloat(price).toFixed(2);
+    this.price = price;
     this.type = type;
     this.image = `img/${name} ${type}.jpg`;
   }

@@ -263,7 +263,8 @@ function createWalls (qWall) {
     inputHeigth.classList.add('form-control');
     inputHeigth.min = 1;
     inputHeigth.pattern = '^[1-9]\d*$';
-    inputHeigth.id = `paredH${[i+1]}`
+    inputHeigth.id = `paredH${[i+1]}`;
+    inputHeigth.setAttribute('required', true);
     let labelWidth = document.createElement('label');
     labelWidth.classList.add('form-label', 'h6');
     labelWidth.textContent = `"Ancho en cm"`;
@@ -272,7 +273,8 @@ function createWalls (qWall) {
     inputWidth.classList.add('form-control');
     inputWidth.min = 1;
     inputWidth.pattern = '^[1-9]\d*$';
-    inputWidth.id = `paredW${[i+1]}`
+    inputWidth.id = `paredW${[i+1]}`;
+    inputWidth.setAttribute('required', true);
     
     divWallH.appendChild(labelHeigth);
     divWallH.appendChild(inputHeigth);
@@ -339,6 +341,7 @@ function createRoofs (qRoof) {
     inputLong.min = 1;
     inputLong.pattern = '^[1-9]\d*$';
     inputLong.id = `techoL${[i+1]}`
+    inputLong.setAttribute('required', true);
     let labelWidth = document.createElement('label');
     labelWidth.classList.add('form-label', 'h6');
     labelWidth.textContent = `"Ancho en cm"`;
@@ -348,6 +351,7 @@ function createRoofs (qRoof) {
     inputWidth.min = 1;
     inputWidth.pattern = '^[1-9]\d*$';
     inputWidth.id = `techoW${[i+1]}`
+    inputWidth.setAttribute('required', true);
     
     divRoofL.appendChild(labelLong);
     divRoofL.appendChild(inputLong);
@@ -382,10 +386,14 @@ formWall.addEventListener('submit',(e2) => {
   e2.preventDefault();
 
   let qWall = localStorage.getItem("qWall")
-
+  
   for (let i = 0; i<qWall; i+=1) {
-    const wall = new Walls((document.querySelector(`#paredH${[i+1]}`).value)/100, (document.querySelector(`#paredW${[i+1]}`).value)/100);
-    wallsModel.push(wall);
+    if ((document.querySelector(`#paredH${[i+1]}`).value) === 0 || (document.querySelector(`#paredW${[i+1]}`).value) === 0 ) {
+      swal("Por favor ingrese una medida valida");
+    } else {
+      const wall = new Walls((document.querySelector(`#paredH${[i+1]}`).value)/100, (document.querySelector(`#paredW${[i+1]}`).value)/100);
+      wallsModel.push(wall);
+    }
   }
   localStorage.setItem("walls", JSON.stringify(wallsModel));
 
@@ -409,10 +417,15 @@ formRoof.addEventListener('submit',(e2) => {
 
 //Muestra cotización de paredes según información recolectada
 function showQuotationWall(){
+  form.remove();
+  roofSelected.remove();
+  h1.remove();
+  wallSelected.remove();
+
   let totalSizeW = 0;
   let walls = JSON.parse(localStorage.getItem("walls"))
   let model = localStorage.getItem("modelW");
-  const wallT = plaques.find( element => element.name === model);
+  const wallT = plaques.find( element => element.name === model && element.type === "revestimiento");
   const sellajunta = adds.find( element => element.name === "Sellajuntas");
   const adhesivo = adds.find( element => element.name === "Adhesivo");
   const adh2e1 = adds.find( element => element.name === "2en1");
@@ -421,31 +434,234 @@ function showQuotationWall(){
     totalSizeW += wall.height*wall.width;
     return totalSizeW
   })
-  let qPlaWall = Math.ceil(totalSizeW/wallT.size())*wallT.price;  
+  let adhQ = adhesivo.performanceWalls(totalSizeW)
+  let sellQ = sellajunta.performanceWalls(totalSizeW)
+  let a2en1Q = adh2e1.performanceWalls(totalSizeW)
+  let qPlaWall = Math.ceil(totalSizeW/wallT.size())
+  let tPlaWall = Math.ceil(totalSizeW/wallT.size())*wallT.price;  
   let frisTot = localStorage.getItem("frisos")*135;
-  let sellTot = sellajunta.performanceWalls(totalSizeW)*sellajunta.price;
-  let adhTot = adhesivo.performanceWalls(totalSizeW)*adhesivo.price;
-  let adh2en1Tot = adh2e1.performanceWalls(totalSizeW)*adh2e1.price;
+  let sellTot = sellQ*sellajunta.price;
+  let adhTot = adhQ*adhesivo.price;
+  let adh2en1Tot = a2en1Q*adh2e1.price;
 
-  let totalQuotation1 = qPlaWall + frisTot + sellTot + adhTot;
-  let totalQuotation2 = qPlaWall + frisTot + adh2en1Tot;
+  let totalQuotation1 = tPlaWall + frisTot + sellTot + adhTot;
+  let totalQuotation2 = tPlaWall + frisTot + adh2en1Tot;
+
+  $('#quotation').append(`<div class="row g-0">
+                            <div class="col-sm-6 col-md-3">
+                              <img src="img/Logo.jpeg" class="rounded mx-auto d-block" alt="..." width="200" height="170" style="padding: 15px;">
+                            </div>
+                            <div class="col-sm-6 col-md-9">
+                              <h2 id="presupuesto">PRESUPUESTO </h2>
+                            </div>
+                          </div>
+                          <div class="card text-center">
+                            <h5 class="card-header"> Ud ha cotizado </h5>
+                            <div class="card mb-3">
+                              <div class="row g-0" >
+                                <div class="col-md-4" style="max-width: 540px;">
+                                  <img src="img/${wallT.name} revestimiento.jpg" class="img-fluid rounded-start" alt="...">
+                                </div>
+                                <div class="col-md-8">
+                                  <div class="card-body">
+                                    <h5 class="card-title"> Placas de revestimiento modelo <strong>${wallT.name}</strong> </h5>
+                                    <p class="card-text">${wallT.description()}</p>
+                                    <a id="init" href="index.html" class="btn btn-primary">Nueva Cotización</a>
+                                    <a id="print" href="#" class="btn btn-primary">Descargar</a>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="card-body">
+                                <br>
+                                <h5 class="card-text">Esta cotizacion incluye en la opcion A:</h5>
+                              </div>
+                              <div class="table-responsive">
+                                <table class="table align-middle">
+                                  <thead>
+                                    <tr>
+                                      <th scope="col">Cantidad</th>
+                                      <th scope="col">Descripcion</th>
+                                      <th scope="col">$ Unitario</th>
+                                      <th scope="col">$ Total</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr>
+                                      <td>${qPlaWall}</td>
+                                      <td>${wallT.name}, tamaño ${(wallT.height*100).toFixed(0)}x${(wallT.width*100).toFixed(0)}</td>
+                                      <td>$${wallT.price}</td>
+                                      <td>$${tPlaWall}</td>
+                                    </tr>
+                                    <tr>
+                                      <td>${localStorage.getItem("frisos")}</td>
+                                      <td>Frisos</td>
+                                      <td>$135</td>
+                                      <td>$${frisTot}</td>
+                                    </tr>
+                                    <tr>
+                                      <td>${adhQ}</td>
+                                      <td>${adhesivo.name} x ${adhesivo.qty}kg. Rendimiento ${adhesivo.performance}mts2</td>
+                                      <td>$${adhesivo.price}</td>
+                                      <td>$${adhTot}</td>
+                                    </tr>
+                                    <tr>
+                                    <td>${sellQ}</td>
+                                    <td>${sellajunta.name} x ${sellajunta.qty}kg. Rendimiento ${sellajunta.performance}mts2</td>
+                                    <td>$${sellajunta.price}</td>
+                                    <td>$${sellTot}</td>
+                                    </tr>
+                                  </tbody>
+                                  <tfoot>
+                                    <tr>
+                                      <th colspan="3">TOTAL</th>
+                                      <th>$${totalQuotation1}</th>
+                                    </tr>
+                                  </tfoot>
+                                </table>
+                              </div>
+                              <div class="card-body">
+                                <br>
+                                <h5 class="card-text">Esta cotizacion incluye en la opcion B:</h5>
+                              </div>
+                              <div class="table-responsive">
+                                <table class="table align-middle">
+                                  <thead>
+                                    <tr>
+                                      <th scope="col">Cantidad</th>
+                                      <th scope="col">Descripcion</th>
+                                      <th scope="col">$ Unitario</th>
+                                      <th scope="col">$ Total</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr>
+                                      <td>${qPlaWall}</td>
+                                      <td>${wallT.name}, tamaño ${(wallT.height*100).toFixed(0)}x${(wallT.width*100).toFixed(0)}</td>
+                                      <td>$${wallT.price}</td>
+                                      <td>$${tPlaWall}</td>
+                                    </tr>
+                                    <tr>
+                                      <td>${localStorage.getItem("frisos")}</td>
+                                      <td>Frisos</td>
+                                      <td>$135</td>
+                                      <td>$${frisTot}</td>
+                                    </tr>
+                                    <tr>
+                                      <td>${a2en1Q}</td>
+                                      <td>${adh2e1.name} x ${adh2e1.qty}kg. Rendimiento ${adh2e1.performance}mts2</td>
+                                      <td>$${adh2e1.price}</td>
+                                      <td>$${adh2en1Tot}</td>
+                                    </tr>
+                                  </tbody>
+                                  <tfoot>
+                                    <tr>
+                                      <th colspan="3">TOTAL</th>
+                                      <th>$${totalQuotation2}</th>
+                                    </tr>
+                                  </tfoot>
+                                </table>
+                              </div>
+                            </div>
+                          </div>`)
+  $('#quotation').slideDown().delay(500);
 }
 
 //Muestra cotización de techos según información recolectada
 function showQuotationRoof(){
+  form.remove();
+  roofSelected.remove();
+  h1.remove();
+  wallSelected.remove();
+
   let totalSizeR = 0;
   let roofs = JSON.parse(localStorage.getItem("roofs"))
   let model = localStorage.getItem("modelR");
-  const roofT = plaques.find( element => element.name === model);
+  const roofT = plaques.find( element => element.name === model && element.type === "cielorraso");
   const sellajunta = adds.find( element => element.name === "Sellajuntas");
 
   roofs.forEach(roof => {
     totalSizeR += roof.height*roof.width;
     return totalSizeR
   })
-  let qPlaRoof = Math.ceil((totalSizeR/roofT.size()).toFixed(2))*roofT.price;  
+  let qPlaRoof = Math.ceil((totalSizeR/roofT.size()).toFixed(2))
+  let tPlaRoof = qPlaRoof*roofT.price;  
   let molTot = localStorage.getItem("molduras")*195;
-  let sellTot = sellajunta.performanceWalls(totalSizeR)*sellajunta.price;
+  let qSell = sellajunta.performanceWalls(totalSizeR)
+  let sellTot = qSell*sellajunta.price;
 
-  let totalQuotation = qPlaRoof + molTot + sellTot;
+  let totalQuotation = tPlaRoof + molTot + sellTot;
+
+  $('#quotation').append(`<div class="row g-0">
+                            <div class="col-sm-6 col-md-3">
+                              <img src="img/Logo.jpeg" class="rounded mx-auto d-block" alt="..." width="200" height="170" style="padding: 15px;">
+                            </div>
+                            <div class="col-sm-6 col-md-9">
+                              <h2 id="presupuesto">PRESUPUESTO </h2>
+                            </div>
+                          </div>
+                          <div class="card text-center">
+                            <h5 class="card-header"> Ud ha cotizado </h5>
+                            <div class="card mb-3">
+                              <div class="row g-0" >
+                                <div class="col-md-4" style="max-width: 540px;">
+                                  <img src="img/${roofT.name} cielorraso.jpg" class="img-fluid rounded-start" alt="...">
+                                </div>
+                                <div class="col-md-8">
+                                  <div class="card-body">
+                                    <h5 class="card-title"> Placas de cielorraso modelo <strong>${roofT.name}</strong> </h5>
+                                    <p class="card-text">${roofT.description()}</p>
+                                    <a id="init" href="index.html" class="btn btn-primary">Nueva Cotización</a>
+                                    <a id="print" href="#" class="btn btn-primary">Descargar</a>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="card-body">
+                                <br>
+                                <h5 class="card-text">Esta cotizacion incluye:</h5>
+                              </div>
+                              <div class="table-responsive">
+                                <table class="table align-middle">
+                                  <thead>
+                                    <tr>
+                                      <th scope="col">Cantidad</th>
+                                      <th scope="col">Descripcion</th>
+                                      <th scope="col">$ Unitario</th>
+                                      <th scope="col">$ Total</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr>
+                                      <td>${qPlaRoof}</td>
+                                      <td>${roofT.name}, tamaño ${(roofT.height*100).toFixed(0)}x${(roofT.width*100).toFixed(0)}</td>
+                                      <td>$${roofT.price}</td>
+                                      <td>$${tPlaRoof}</td>
+                                    </tr>
+                                    <tr>
+                                      <td>${localStorage.getItem("molduras")}</td>
+                                      <td>Molduras</td>
+                                      <td>$195</td>
+                                      <td>$${molTot}</td>
+                                    </tr>
+                                    <tr>
+                                      <td>${qSell}</td>
+                                      <td>${sellajunta.name} x ${sellajunta.qty}kg. Rendimiento ${sellajunta.performance}mts2</td>
+                                      <td>$${sellajunta.price}</td>
+                                      <td>$${sellTot}</td>
+                                    </tr>
+                                  </tbody>
+                                  <tfoot>
+                                    <tr>
+                                      <th colspan="3">TOTAL</th>
+                                      <th>$${totalQuotation}</th>
+                                    </tr>
+                                  </tfoot>
+                                </table>
+                              </div>
+                            </div>
+                          </div>`)
+  $('#quotation').slideDown().delay(500);
 }
+
+$('#init').on(click, ()=> {
+  showProducts();
+  initial();})

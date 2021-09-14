@@ -61,3 +61,14 @@ div#divWall{
   
 }
 
+div#quotation {
+  margin-top: 30px;
+  padding-bottom: 15px;
+  background-color: whitesmoke
+}
+
+h2#presupuesto {
+  padding: 50px;
+  color: darkorange;
+  font-weight: bold;
+}

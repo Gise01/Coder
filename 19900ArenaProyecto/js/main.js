@@ -466,20 +466,22 @@ function showQuotationWall(){
                                   <div class="card-body">
                                     <h5 class="card-title"> Placas de revestimiento modelo <strong>${wallT.name}</strong> </h5>
                                     <p class="card-text">${wallT.description()}</p>
+                                    <p class="card-text">La siguiente cotización cubre un total de ${localStorage.getItem("qWall")} pared/paredes, y un total de ${totalSizeW.toFixed(2)}mts2</p>
                                     <a id="init" href="index.html" class="btn btn-primary">Nueva Cotización</a>
-                                    <a id="print" href="#" class="btn btn-primary">Descargar</a>
+                                    <button id="print" class="btn btn-primary">Descargar</button>
                                   </div>
                                 </div>
                               </div>
-                              <div class="card-body">
+                              <div class="card-body" style="background-color: lightgrey;">
                                 <br>
                                 <h5 class="card-text">Esta cotizacion incluye en la opcion A:</h5>
+                                <p class="card-text">Esta opción incluye adhesivo y sellador como productos independientes y en bolsas individuales.</p>
                               </div>
                               <div class="table-responsive">
-                                <table class="table align-middle">
+                                <table class="table align-middle table-secondary table-striped">
                                   <thead>
                                     <tr>
-                                      <th scope="col">Cantidad</th>
+                                      <th scope="col">Unidades</th>
                                       <th scope="col">Descripcion</th>
                                       <th scope="col">$ Unitario</th>
                                       <th scope="col">$ Total</th>
@@ -519,15 +521,16 @@ function showQuotationWall(){
                                   </tfoot>
                                 </table>
                               </div>
-                              <div class="card-body">
+                              <div class="card-body" style="background-color: wheat">
                                 <br>
                                 <h5 class="card-text">Esta cotizacion incluye en la opcion B:</h5>
+                                <p class="card-text">Esta opción incluye adhesivo 2 en 1, el cual sirve tanto para pegar como para las uniones de las placas. Un solo producto que cumple ambas funciones.</p>
                               </div>
                               <div class="table-responsive">
-                                <table class="table align-middle">
+                                <table class="table align-middle table-warning table-striped">
                                   <thead>
                                     <tr>
-                                      <th scope="col">Cantidad</th>
+                                      <th scope="col">Unidades</th>
                                       <th scope="col">Descripcion</th>
                                       <th scope="col">$ Unitario</th>
                                       <th scope="col">$ Total</th>
@@ -564,6 +567,8 @@ function showQuotationWall(){
                             </div>
                           </div>`)
   $('#quotation').slideDown().delay(500);
+
+  send();
 }
 
 //Muestra cotización de techos según información recolectada
@@ -610,8 +615,9 @@ function showQuotationRoof(){
                                   <div class="card-body">
                                     <h5 class="card-title"> Placas de cielorraso modelo <strong>${roofT.name}</strong> </h5>
                                     <p class="card-text">${roofT.description()}</p>
-                                    <a id="init" href="index.html" class="btn btn-primary">Nueva Cotización</a>
-                                    <a id="print" href="#" class="btn btn-primary">Descargar</a>
+                                    <p class="card-text">La siguiente cotización cubre un total de ${localStorage.getItem("qRoof")} techo/techos, y un total de ${totalSizeR.toFixed(2)}mts2</p>
+                                    <button id="init" class="btn btn-primary">Nueva Cotización</button>
+                                    <button id="print" class="btn btn-primary">Descargar</button>
                                   </div>
                                 </div>
                               </div>
@@ -623,7 +629,7 @@ function showQuotationRoof(){
                                 <table class="table align-middle">
                                   <thead>
                                     <tr>
-                                      <th scope="col">Cantidad</th>
+                                      <th scope="col">Unidades</th>
                                       <th scope="col">Descripcion</th>
                                       <th scope="col">$ Unitario</th>
                                       <th scope="col">$ Total</th>
@@ -660,8 +666,36 @@ function showQuotationRoof(){
                             </div>
                           </div>`)
   $('#quotation').slideDown().delay(500);
+
+  send();
 }
 
-$('#init').on(click, ()=> {
-  showProducts();
-  initial();})
+//Descagar PDF de la cotización realizada
+function send() {
+  const btnCot = document.querySelector('#print')
+  btnCot.addEventListener("click", ()=> {
+    const cotPrint = document.querySelector('#quotation');
+  
+    html2pdf()
+      .set({
+        margin: 0.9,
+        filename: 'cotizacion.pdf',
+        image: {
+          type: 'png',
+          quality: 0.98
+        },
+        html2canvas: {
+          scale: 3,
+          letterRendering: true,
+        },
+        jsPDF: {
+          unit: "in",
+          format: "a4",
+          orinetation: 'portrait'
+        }
+      })
+      .from(cotPrint)
+      .save()
+      .catch(err=>console.log(err));
+  })
+}

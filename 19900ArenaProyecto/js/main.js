@@ -678,7 +678,7 @@ function send() {
   
     html2pdf()
       .set({
-        margin: 0.9,
+        margin: 0.95,
         filename: 'cotizacion.pdf',
         image: {
           type: 'png',
